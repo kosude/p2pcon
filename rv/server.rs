@@ -7,6 +7,8 @@
 
 use std::net::UdpSocket;
 
+static COMMON_PORT: u16 = 50002;
+
 fn main() -> std::io::Result<()> {
     let sock = UdpSocket::bind("0.0.0.0:55555")?;
 
@@ -35,7 +37,13 @@ fn main() -> std::io::Result<()> {
         let c1 = clients.pop().expect("Not enough clients");
         let c2 = clients.pop().expect("Not enough clients");
 
-        sock.send_to("client 1".as_bytes(), c1)?;
-        sock.send_to("client 2".as_bytes(), c2)?;
+        sock.send_to(
+            format!("{};{};{}", &c1.ip(), &c1.port(), COMMON_PORT).as_bytes(),
+            c2,
+        )?;
+        sock.send_to(
+            format!("{};{};{}", &c2.ip(), &c2.port(), COMMON_PORT + 1).as_bytes(),
+            c1,
+        )?;
     }
 }
