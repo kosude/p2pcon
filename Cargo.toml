@@ -1,0 +1,13 @@
+[package]
+name = "p2pcon"
+edition = "2018"
+
+[[bin]]
+name = "rv"
+path = "rv/server.rs"
+
+[[bin]]
+name = "peer"
+path = "peer/main.rs"
+
+[dependencies]
