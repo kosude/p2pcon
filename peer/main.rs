@@ -57,6 +57,11 @@ fn main() -> std::io::Result<()> {
         .parse::<u16>()
         .unwrap();
 
+    println!(
+        "Peer:\n\tIP: {}\n\tSrc port: {}\n\tDst port: {}",
+        &peer_ip, &src_port, &dst_port
+    );
+
     // UDP punching: connect to peer
     let p2p_sock = UdpSocket::bind((Ipv4Addr::UNSPECIFIED, src_port))?;
     p2p_sock.connect((peer_ip, dst_port))?;
@@ -83,7 +88,7 @@ fn main() -> std::io::Result<()> {
     loop {
         for line in stdin.lock().lines() {
             let line = line.unwrap();
-            p2p_sock.send(line.as_bytes())?;
+            p2p_sock.send_to(line.as_bytes(), (peer_ip, dst_port))?;
         }
     }
 }
