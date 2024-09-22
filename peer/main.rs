@@ -6,17 +6,22 @@
  */
 
 use std::{
+    env,
     io::{self, BufRead},
     net::{Ipv4Addr, UdpSocket},
     thread,
 };
 
 fn main() -> std::io::Result<()> {
-    let rvhost = "0.0.0.0:55555";
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        println!("Usage: {} rvhost", args[0]);
+        std::process::exit(1);
+    }
+    let rvhost = args[1].clone() + &":55555";
+    println!("Specified rendezvous server host: {}", &rvhost);
 
     let sock = UdpSocket::bind((Ipv4Addr::UNSPECIFIED, 0))?;
-    sock.connect(rvhost)?;
-
     sock.send_to(&[0], rvhost)?;
 
     // wait for rendezvous to be ready
