@@ -7,7 +7,7 @@
 
 use std::{
     env,
-    io::{self, BufRead},
+    io::{self},
     net::{Ipv4Addr, UdpSocket},
     thread,
 };
@@ -44,7 +44,7 @@ fn main() -> std::io::Result<()> {
     let data = String::from_utf8_lossy(&data_buf);
     let mut data = data.splitn(3, ";");
     let peer_ip = data.next().unwrap().trim_matches('\0');
-    let src_port = data
+    let _src_port = data
         .next()
         .unwrap()
         .trim_matches('\0')
