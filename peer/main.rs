@@ -7,7 +7,7 @@
 
 use std::{
     env,
-    io::{self, BufRead},
+    io::{self, BufRead, Write},
     net::{Ipv4Addr, UdpSocket},
     thread,
 };
@@ -63,6 +63,7 @@ fn main() -> std::io::Result<()> {
     p2p_sock.send(&[0])?;
 
     println!("Connected to peer; ready.");
+    io::stdout().flush()?;
 
     // spawn listener thread
     let p2p_sock_cln = p2p_sock.try_clone()?;
@@ -74,6 +75,7 @@ fn main() -> std::io::Result<()> {
                 "Peer: {}",
                 String::from_utf8_lossy(&data).trim_matches('\0')
             );
+            io::stdout().flush()?;
         }
     });
 
