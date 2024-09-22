@@ -81,14 +81,18 @@ fn main() -> std::io::Result<()> {
                 "Peer: {}",
                 String::from_utf8_lossy(&data).trim_matches('\0')
             );
+            data.fill(0);
         }
     });
 
     let stdin = io::stdin();
+    let mut inbuf = String::with_capacity(1024);
     loop {
-        for line in stdin.lock().lines() {
-            let line = line.unwrap();
-            p2p_sock.send_to(line.as_bytes(), (peer_ip, dst_port))?;
-        }
+        stdin.read_line(&mut inbuf)?;
+
+        let out = inbuf.trim().as_bytes();
+        p2p_sock.send_to(out, (peer_ip, dst_port))?;
+
+        inbuf.clear();
     }
 }
