@@ -22,7 +22,8 @@ fn main() -> std::io::Result<()> {
     println!("Specified rendezvous server host: {}", &rvhost);
 
     let sock = UdpSocket::bind((Ipv4Addr::UNSPECIFIED, 0))?;
-    sock.send_to(&[0], rvhost)?;
+    sock.connect(&rvhost)?;
+    sock.send(&[0])?;
 
     // wait for rendezvous to be ready
     let mut ready_buf = [0; 1];
