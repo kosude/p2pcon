@@ -19,11 +19,7 @@ fn main() -> std::io::Result<()> {
         loop {
             let (_, src) = sock.recv_from(&mut buf)?;
 
-            println!(
-                "Connection from {} (recieved: '{:?}')",
-                &src,
-                String::from_utf8_lossy(&buf)
-            );
+            println!("Connection from {}", &src);
             clients.push(src);
 
             sock.send_to("ready".as_bytes(), src)?;
@@ -42,7 +38,7 @@ fn main() -> std::io::Result<()> {
             c2,
         )?;
         sock.send_to(
-            format!("{};{};{}", &c2.ip(), &c2.port(), COMMON_PORT + 1).as_bytes(),
+            format!("{};{};{}", &c2.ip(), &c2.port(), COMMON_PORT).as_bytes(),
             c1,
         )?;
     }

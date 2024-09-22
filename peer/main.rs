@@ -7,7 +7,7 @@
 
 use std::{
     env,
-    io::{self, BufRead, Write},
+    io::{self, BufRead},
     net::{Ipv4Addr, UdpSocket},
     thread,
 };
@@ -57,18 +57,19 @@ fn main() -> std::io::Result<()> {
         .parse::<u16>()
         .unwrap();
 
+    // UDP punching: connect to peer
+    let p2p_sock = UdpSocket::bind((Ipv4Addr::UNSPECIFIED, dst_port))?;
+
+    let me = p2p_sock.local_addr()?;
+    println!("Me:\n\tListening on port: {}", &me.port(),);
     println!(
-        "Peer:\n\tIP: {}\n\tSrc port: {}\n\tDst port: {}",
-        &peer_ip, &src_port, &dst_port
+        "Peer:\n\tIP: {}\n\tAssumed listening on port: {}",
+        &peer_ip, &dst_port,
     );
 
-    // UDP punching: connect to peer
-    let p2p_sock = UdpSocket::bind((Ipv4Addr::UNSPECIFIED, src_port))?;
     p2p_sock.connect((peer_ip, dst_port))?;
     p2p_sock.send(&[0])?;
-
     println!("Connected to peer; ready.");
-    io::stdout().flush()?;
 
     // spawn listener thread
     let p2p_sock_cln = p2p_sock.try_clone()?;
@@ -80,7 +81,6 @@ fn main() -> std::io::Result<()> {
                 "Peer: {}",
                 String::from_utf8_lossy(&data).trim_matches('\0')
             );
-            io::stdout().flush()?;
         }
     });
 
